@@ -1,0 +1,68 @@
+body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: url(http://funkyimg.com/i/25WDN.jpg), -webkit-linear-gradient(bottom, #AFDAFA, #0570BE);
+  background: url(http://funkyimg.com/i/25WDN.jpg), linear-gradient(to top, #AFDAFA, #0570BE);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+#stats-box {
+  width: 33%;
+  height: 10%;
+  background-color: white;
+  position: absolute;
+  bottom: 5%;
+  left: 33%;
+  border-radius: 25px;
+  padding: 20px;
+  color: red;
+}
+
+#stats-box p {
+  text-align: center;
+  font-size: 150%;
+}
+
+#game-box {
+  width: 33%;
+  height: 20%;
+  background-color: white;
+  position: absolute;
+  top: 10%;
+  left: 33%;
+  font-size: 200%;
+  border-radius: 25px;
+  padding: 20px;
+
+  /*disable selection*/
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+#input-box {
+  width: 33%;
+  height: 20%;
+  background-color: white;
+  position: absolute;
+  top: 31%;
+  left: 33%;
+  border-radius: 25px;
+  font-size: 200%;
+  padding: 20px;
+}
+
+#input-box.correct {
+  background-color: #aaffaa !important;
+}
+
+#input-box.wrong {
+  background-color: #ffaaaa !important;
+}
