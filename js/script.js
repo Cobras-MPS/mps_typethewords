@@ -1,4 +1,5 @@
 $(document).ready(function(){
+  generateHearts();
   // Init Animation
   initTextAnimation();
   // Init Listener
@@ -15,6 +16,7 @@ $.fn.extend({
       } else {
         this.onmousedown = function() { return false; };
       }
+	  //startTimeout();
     });
   }
 });
@@ -27,6 +29,12 @@ $.fn.extend({
 // }
 
 var wordCount = 1;
+var heartsLeft = 4;
+var cache = {
+	"result": null,
+	"timer": setTimeout(function(){}, 1),
+	"timeout": 3000,
+}
 
 function initTextAnimation() {
   // Detect Ctrl key
@@ -88,7 +96,7 @@ function initTextAnimation() {
       reverse: false,
 
       // callback that executes once the animation has finished
-      callback: function () {}
+      callback: startTimeout
     },
 
     // out animation settings.
@@ -99,11 +107,11 @@ function initTextAnimation() {
       sync: false,
       shuffle: false,
       reverse: false,
-      callback: wordValidation
+      callback: abortTimeout
     },
 
     // callback that executes once textillate has finished
-    callback: function () {},
+    callback: function(){},
 
     // set the type of token to animate (available types: 'char' and 'word')
     type: 'char'
@@ -132,12 +140,47 @@ function wordValidation() {
   var currentWord = $( "ul li:nth-child(" + wordCount + ")" ).html();
   var inputWord = $('#input-box').val();
 
-  if(currentWord === inputWord) {
-    var correctWords = 1*$('#correct-words').html();
-    $('#correct-words').html(correctWords+1);
-  }
+  if(currentWord === inputWord)
+	success();
+  else
+  	error();
 
   $('#input-box').val('');
   $('#input-box').removeClass();
   wordCount++;
+}
+
+function success() {
+	var correctWords = 1*$('#correct-words').html();
+    $('#correct-words').html(correctWords+1);	
+}
+
+function error() {
+	cache.timeout = 3000;
+	breakHeart();
+}
+
+function startTimeout() {
+  abortTimeout();
+  $(".timer-value").animate({width:'0%'}, cache.timeout, "linear");
+  cache.timer = setTimeout(wordValidation, cache.timeout);
+}
+
+function abortTimeout() {
+  clearTimeout(cache.timer);
+  $(".timer-value").stop();
+  $(".timer-value").css({width: "100%"});
+}
+
+function generateHearts() {
+	$('.hearts').html("");
+	for (var i = 1; i <= 4; i++) {
+		$('.hearts').append("<i class='fa fa-heart'></i>");
+	};
+}
+
+function breakHeart() {
+  var h = $('.hearts' + " :not(.broken).fa-heart"); // Select non-broken hearts
+  $(h.get(h.length-1)).addClass("broken");
+  heartsLeft--;
 }
