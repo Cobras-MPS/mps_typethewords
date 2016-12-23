@@ -1,8 +1,8 @@
 $(document).ready(function(){
-
-
   //Init list of words
   populateGameBox();
+  //Generate hearts for lives
+  generateHearts();
   // Init Animation
   initTextAnimation();
   // Init Listener
@@ -19,6 +19,7 @@ $.fn.extend({
       } else {
         this.onmousedown = function() { return false; };
       }
+	  //startTimeout();
     });
   }
 });
@@ -48,7 +49,12 @@ var lvlAt = 0;
 var wordAt = 0;
 var curentScore = 0;
 var nextWord = 0;
-
+var heartsLeft = 4;
+var cache = {
+	"result": null,
+	"timer": setTimeout(function(){}, 1),
+	"timeout": 1500,
+}
 
 function initTextAnimation() {
   // Detect Ctrl key
@@ -88,7 +94,30 @@ function initTextAnimation() {
     // custom set of 'out' effects
     outEffects: [],
 
-    
+    // in animation settings
+    in: {
+      // set the effect name
+
+      // set the delay factor applied to each consecutive character
+      delayScale: 1.5,
+
+      // set the delay between each character
+      delay: 50,
+
+      // set to true to animate all the characters at the same time
+      sync: false,
+
+      // randomize the character sequence
+      // (note that shuffle doesn't make sense with sync = true)
+      shuffle: false,
+
+      // reverse the character sequence
+      // (note that reverse doesn't make sense with sync = true)
+      reverse: false,
+
+      // callback that executes once the animation has finished
+      callback: startTimeout
+    },
 
     // out animation settings.
     out: {
@@ -98,11 +127,11 @@ function initTextAnimation() {
       sync: false,
       shuffle: false,
       reverse: false,
-      callback: wordValidation
+      callback: abortTimeout
     },
 
     // callback that executes once textillate has finished
-    callback: function () {},
+    callback: function(){},
 
     // set the type of token to animate (available types: 'char' and 'word')
     type: 'char'
@@ -128,6 +157,7 @@ function initInputListener() {
       $('#input-box').removeClass().addClass('wrong');
       livesCount--;
       $('#current-lives').html(livesCount);
+      error();
       if(livesCount <= 0){       
         $('#current-lives').html(livesCount);
         if(!alert("GAME OVER!")){window.location.reload();}
@@ -148,11 +178,13 @@ function wordValidation() {
     $('#correct-words').html(correctWords+1);
     curentScore += 1*(Math.floor(nextWord/LVL_NUM) + 1);
     $('#current-score').html(curentScore);
+
   }
 
   if( currentWord.length > 0 && inputWord == ''){
     livesCount--;
     $('#current-lives').html(livesCount);
+    error();
   }
 
   $('#input-box').val('');
@@ -179,4 +211,39 @@ function populateGameBox(){
     }
   }
 
+}
+
+function success() {
+	var correctWords = 1*$('#correct-words').html();
+    $('#correct-words').html(correctWords+1);	
+}
+
+function error() {
+	cache.timeout = 1500;
+	breakHeart();
+}
+
+function startTimeout() {
+  abortTimeout();
+  $(".timer-value").animate({width:'0%'}, cache.timeout, "linear");
+  cache.timer = setTimeout(wordValidation, cache.timeout);
+}
+
+function abortTimeout() {
+  clearTimeout(cache.timer);
+  $(".timer-value").stop();
+  $(".timer-value").css({width: "100%"});
+}
+
+function generateHearts() {
+	$('.hearts').html("");
+	for (var i = 1; i <= 4; i++) {
+		$('.hearts').append("<i class='fa fa-heart'></i>");
+	};
+}
+
+function breakHeart() {
+  var h = $('.hearts' + " :not(.broken).fa-heart"); // Select non-broken hearts
+  $(h.get(h.length-1)).addClass("broken");
+  heartsLeft--;
 }
