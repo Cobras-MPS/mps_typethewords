@@ -1,4 +1,8 @@
 $(document).ready(function(){
+
+
+  //Init list of words
+  populateGameBox();
   // Init Animation
   initTextAnimation();
   // Init Listener
@@ -26,7 +30,25 @@ $.fn.extend({
 //   }
 // }
 
+var LVL_NUM = 3;
+var LVL_WORDS = 3;
+var MAX_LIVES = 3;
+
+var effects_types = ['fadeIn', 'flash', 'fadeIn', 'tada', 'fadeInLeftBig', 'fadeInRightBig', 'rollIn', 'tada', 'tada'];
+var lvl_time = [1500, 2000, 2500];
+var lvl_texts = [];
+lvl_texts.push(['ana', 'are', 'mere']);
+lvl_texts.push(['extraterestru', 'hipopotam', 'claustrofobie']);
+lvl_texts.push(['ana are mere', 'ana are mere si pere', 'la multi ani']);
+
+
+var livesCount = MAX_LIVES;
 var wordCount = 1;
+var lvlAt = 0;
+var wordAt = 0;
+var curentScore = 0;
+var nextWord = 0;
+
 
 function initTextAnimation() {
   // Detect Ctrl key
@@ -48,7 +70,8 @@ function initTextAnimation() {
     loop: false,
 
     // sets the minimum display time for each text before it is replaced
-    minDisplayTime: 3000,
+    //MUST CHANGE - now is GLOBAL
+    minDisplayTime: lvl_time[0],
 
     // sets the initial delay before starting the animation
     // (note that depending on the in effect you may need to manually apply
@@ -60,36 +83,12 @@ function initTextAnimation() {
 
     // custom set of 'in' effects. This effects whether or not the
     // character is shown/hidden before or after an animation
-    inEffects: [],
+    inEffects: effects_types,
 
     // custom set of 'out' effects
     outEffects: [],
 
-    // in animation settings
-    in: {
-      // set the effect name
-      effect: 'fadeIn',
-
-      // set the delay factor applied to each consecutive character
-      delayScale: 1.5,
-
-      // set the delay between each character
-      delay: 50,
-
-      // set to true to animate all the characters at the same time
-      sync: false,
-
-      // randomize the character sequence
-      // (note that shuffle doesn't make sense with sync = true)
-      shuffle: false,
-
-      // reverse the character sequence
-      // (note that reverse doesn't make sense with sync = true)
-      reverse: false,
-
-      // callback that executes once the animation has finished
-      callback: function () {}
-    },
+    
 
     // out animation settings.
     out: {
@@ -117,11 +116,29 @@ function initInputListener() {
     var charsWritten = inputWord.length;
 
     if(inputWord === currentWord) {
+
       $('#input-box').removeClass().addClass('correct');
-      //next
+
+      if(wordCount >= LVL_NUM * LVL_WORDS){
+        alert("GAME HAS ENDED\nYour score is: " + curentScore);
+        $('#input-box').val('');
+        $('#input-box').removeClass();
+        $( "ul li:nth-child(" + wordCount + ")" ).val('');
+      }
+
     } else
     if(inputWord !== currentWord.substr(0, charsWritten)) {
+
       $('#input-box').removeClass().addClass('wrong');
+      livesCount--;
+      $('#current-lives').html(livesCount);
+
+      if(livesCount <= 0){
+        alert("GAME OVER!");
+        $(".texts").textillate('stop');
+        $( "ul li:nth-child(" + wordCount + ")" ).val('');
+      }
+
     } else {
       $('#input-box').removeClass();
     }
@@ -135,9 +152,37 @@ function wordValidation() {
   if(currentWord === inputWord) {
     var correctWords = 1*$('#correct-words').html();
     $('#correct-words').html(correctWords+1);
+    curentScore += 1*(Math.floor(nextWord/LVL_NUM) + 1);
+    $('#current-score').html(curentScore);
+  }
+
+  if( currentWord.length > 0 && inputWord == ''){
+    livesCount--;
+    $('#current-lives').html(livesCount);
   }
 
   $('#input-box').val('');
   $('#input-box').removeClass();
   wordCount++;
+  nextWord++;
+
+  if(livesCount <= 0){
+    alert("GAME OVER!");
+    $('#current-lives').html(livesCount);
+    $(".texts").textillate('stop');
+    $( "ul li:nth-child(" + wordCount-1 + ")" ).val('');
+  }
+
+}
+
+
+function populateGameBox(){
+  var ulVal = $(".texts");
+  for(var i = 0; i < LVL_NUM; i++){
+    for(var j = 0; j < LVL_WORDS; j++){
+      var liVal = "<li data-in-effect=" + effects_types[i*LVL_WORDS + j] +">"+ lvl_texts[i][j] + "</li>";
+      ulVal.append(liVal);
+    }
+  }
+
 }
