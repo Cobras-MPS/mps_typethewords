@@ -21,7 +21,7 @@
     <div id="stats-box">
       <p>Right words: <span id="correct-words">0</span></p>
       <p>Score: <span id="current-score">0</span></p>
-      <p>Lives: <span id="current-lives">4</span></p>
+      <p>Lives: <span id="current-lives">3</span></p>
     </div>
 
     <!-- Do not modify from here to the end, except for new js inclusions -->

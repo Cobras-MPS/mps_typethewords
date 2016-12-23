@@ -32,7 +32,7 @@ $.fn.extend({
 
 var LVL_NUM = 3;
 var LVL_WORDS = 3;
-var MAX_LIVES = 3;
+var MAX_LIVES = 4;
 
 var effects_types = ['fadeIn', 'flash', 'fadeIn', 'tada', 'fadeInLeftBig', 'fadeInRightBig', 'rollIn', 'tada', 'tada'];
 var lvl_time = [1500, 2000, 2500];
@@ -118,12 +118,8 @@ function initInputListener() {
     if(inputWord === currentWord) {
 
       $('#input-box').removeClass().addClass('correct');
-
       if(wordCount >= LVL_NUM * LVL_WORDS){
-        alert("GAME HAS ENDED\nYour score is: " + curentScore);
-        $('#input-box').val('');
-        $('#input-box').removeClass();
-        $( "ul li:nth-child(" + wordCount + ")" ).val('');
+        if(!alert("GAME HAS ENDED!\n\nYour score is: " + curentScore)){window.location.reload();}
       }
 
     } else
@@ -132,11 +128,9 @@ function initInputListener() {
       $('#input-box').removeClass().addClass('wrong');
       livesCount--;
       $('#current-lives').html(livesCount);
-
-      if(livesCount <= 0){
-        alert("GAME OVER!");
-        $(".texts").textillate('stop');
-        $( "ul li:nth-child(" + wordCount + ")" ).val('');
+      if(livesCount <= 0){       
+        $('#current-lives').html(livesCount);
+        if(!alert("GAME OVER!")){window.location.reload();}
       }
 
     } else {
@@ -167,10 +161,10 @@ function wordValidation() {
   nextWord++;
 
   if(livesCount <= 0){
-    alert("GAME OVER!");
+
     $('#current-lives').html(livesCount);
-    $(".texts").textillate('stop');
-    $( "ul li:nth-child(" + wordCount-1 + ")" ).val('');
+    if(!alert("GAME OVER!")){window.location.reload();}
+    
   }
 
 }
