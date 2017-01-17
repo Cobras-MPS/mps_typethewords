@@ -33,7 +33,7 @@ $.fn.extend({
 // GAME SETTINGS
 var LVL_STAGES = 3; // numarul de propozitii/nivel
 var MAX_LIVES = 5;
-var lvl_time = [1500, 1300, 1000, 800, 600, 420, 330, 270, 230]; // index = numarul propozitiei/lvl_stages
+var lvl_time = [150, 130, 100, 800, 600, 420, 330, 270, 230]; // index = numarul propozitiei/lvl_stages
 
 // text effects
 var effects_in_types  = ["flash", "bounce", "shake", "tada", "swing", "wobble", "pulse", "flip", "flipInX", "flipInY", "fadeIn", "fadeInUp", "fadeInDown", "fadeInLeft", "fadeInRight", "fadeInUpBig", "fadeInDownBig", "fadeInLeftBig", "fadeInRightBig", "bounceIn", "bounceInDown", "bounceInUp", "bounceInLeft", "bounceInRight", "rotateIn", "rotateInDownLeft", "rotateInDownRight", "rotateInUpLeft", "rollIn", "rotateInUpRight"];
@@ -126,6 +126,7 @@ function initTextAnimation() {
   });
 }
 
+var flagEnding = false;
 function initListeners() {
   game.on('inAnimationBegin.tlt', function () {
     $('#input-box').removeClass();
@@ -135,12 +136,24 @@ function initListeners() {
     startTimeout();
   });
 
-  game.on('outAnimationEnd.tlt', function () {
+  game.on('outAnimationBegin.tlt', function () { console.log("beg");
+    flagEnding = true;
     abortTimeout();
-    textValidation();
   });
 
-  game.textillate('start');
+  game.on('outAnimationEnd.tlt', function () { console.log("end");
+    textValidation();
+    game.textillate('in', stageCount);
+    flagEnding = false;
+  });
+
+  $('#input-box').keypress(function(e) {
+    if(e.which == 13 && !flagEnding) {
+      game.textillate('out');
+    }
+  });
+
+  game.textillate('in', stageCount);
 }
 
 function textValidation() {
@@ -173,7 +186,7 @@ function textValidation() {
   // SCORE HERE !!! <~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ^.^
   $('#current-score').html((1*$('#correct-words').html()) + (10*$('#correct-sentences').html()));
 
-  // if(livesCount <= 0 && !alert("GAME OVER!")){window.location.reload();}
+  if(livesCount <= 0 && !alert("GAME OVER! Score: " + $('#current-score').html())){window.location.reload();}
 }
 
 function populateGameBox(){
@@ -197,17 +210,22 @@ function error() {
   breakHeart();
 }
 
+var timeoutVar = setTimeout(function() {}, 0);
 function startTimeout() {
+  clearTimeout(timeoutVar);
+
   var currentLvL = Math.min(Math.floor(stageCount / LVL_STAGES), lvl_time.length-1);
   var timeout = lvl_time[currentLvL] * texts[stageCount].length;
 
-  game.textillate({minDisplayTime: timeout});
+  timeoutVar = setTimeout(function() {game.textillate('out')}, timeout);
 
   $(".timer-value").stop();
   $(".timer-value").animate({width:'0%'}, timeout, "linear");
 }
 
 function abortTimeout() {
+  clearTimeout(timeoutVar);
+
   $(".timer-value").stop();
   $(".timer-value").css({width: "100%"});
 }
