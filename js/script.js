@@ -33,7 +33,7 @@ $.fn.extend({
 // GAME SETTINGS
 var LVL_STAGES = 3; // numarul de propozitii/nivel
 var MAX_LIVES = 5;
-var lvl_time = [150, 130, 100, 800, 600, 420, 330, 270, 230]; // index = numarul propozitiei/lvl_stages
+var lvl_time = [1500, 1300, 1000, 800, 600, 420, 330, 270, 230]; // index = numarul propozitiei/lvl_stages
 
 // text effects
 var effects_in_types  = ["flash", "bounce", "shake", "tada", "swing", "wobble", "pulse", "flip", "flipInX", "flipInY", "fadeIn", "fadeInUp", "fadeInDown", "fadeInLeft", "fadeInRight", "fadeInUpBig", "fadeInDownBig", "fadeInLeftBig", "fadeInRightBig", "bounceIn", "bounceInDown", "bounceInUp", "bounceInLeft", "bounceInRight", "rotateIn", "rotateInDownLeft", "rotateInDownRight", "rotateInUpLeft", "rollIn", "rotateInUpRight"];
