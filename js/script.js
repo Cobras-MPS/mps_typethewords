@@ -43,7 +43,7 @@ var effects_out_types = ["flash", "bounce", "shake", "tada", "swing", "wobble", 
 var texts = [
   // lvl 1
   'Ana are mere.',
-  'De când te caut!',
+  'Scufita Rosie eu sunt.',
   'Tu esti lupul!',
 
   // lvl 2
@@ -58,6 +58,7 @@ var texts = [
 
   // yea, yea,... ik... same level... CHANGE THIS
   'Dragi copilasi, deschideti usa, ca sunt eu, mama voastra.',
+  'De când te caut!',
   'Si crenguta crescu mare si se facu o mândrete de copac.',
   'Fata îsi reteza degetul si cu chiu cu vai încalta condurul.',
 
@@ -186,7 +187,32 @@ function textValidation() {
   // SCORE HERE !!! <~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ^.^
   $('#current-score').html((1*$('#correct-words').html()) + (10*$('#correct-sentences').html()));
 
-  if(livesCount <= 0 && !alert("GAME OVER! Score: " + $('#current-score').html())){window.location.reload();}
+  if(livesCount <= 0) {
+	  var person = prompt("GAME OVER!  Score: " + $('#current-score').html() + "\n Please enter your name", "Player1");
+		
+		if (person != null) {
+			    if (typeof(Storage) !== "undefined") {
+					if (localStorage.clickcount) {
+						localStorage.clickcount = Number(localStorage.clickcount)+1;
+					} else {
+						localStorage.clickcount = 1;
+					}
+					var key = 'tema_mps' + localStorage.clickcount;
+					// Store
+					localStorage.setItem(key, person + ' ' + $('#current-score').html());
+				}
+		}
+		var scores = localStorage.getItem(key); 
+		for(var i in localStorage)
+		{
+			if (i != key && /^tema_mps.*/.test(i)) {
+				scores = scores + '\n' + localStorage.getItem(i);
+			}
+		}
+		if (!alert("                                                        Score: \n" + scores)) {
+			window.location.reload();
+		}
+  }    
 }
 
 function populateGameBox(){
